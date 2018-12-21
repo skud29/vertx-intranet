@@ -20,7 +20,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <vertx.version>3.6.2</vertx.version>
+        <stack.version>3.6.2</stack.version>
         <!--overridden in each project packaged as a fat jar -->
         <main.verticle/>
     </properties>
@@ -51,6 +51,10 @@
             <groupId>io.vertx</groupId>
             <artifactId>vertx-codegen</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-service-discovery</artifactId>
         </dependency>
 
         <!-- Microservice toolbox -->

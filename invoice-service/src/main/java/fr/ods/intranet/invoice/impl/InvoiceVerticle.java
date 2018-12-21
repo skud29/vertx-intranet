@@ -1,6 +1,6 @@
-package fr.ods.intranet.invoice;
+package fr.ods.intranet.invoice.impl;
 
-import fr.ods.intranet.invoice.impl.InvoiceServiceImpl;
+import fr.ods.intranet.invoice.InvoiceService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.servicediscovery.Record;

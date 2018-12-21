@@ -3,12 +3,14 @@ package fr.ods.intranet.invoice;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+
+import java.util.List;
 
 @ProxyGen
 public interface InvoiceService {
 
-    List<Invoice> getAll(Handler<AsyncResult<String>> resultHandler);
-
-    void
+    void getAll(Handler<AsyncResult<Invoices>> resultHandler);
 
 }

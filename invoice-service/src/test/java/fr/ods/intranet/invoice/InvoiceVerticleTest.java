@@ -1,6 +1,6 @@
 package fr.ods.intranet.invoice;
 
-import fr.ods.intranet.verticles.MainVerticle;
+import fr.ods.intranet.invoice.impl.InvoiceVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
@@ -21,7 +21,7 @@ public class InvoiceVerticleTest {
     public void setUp(TestContext context) {
         vertx = Vertx.vertx();
         discovery = ServiceDiscovery.create(vertx);
-        vertx.deployVerticle(MainVerticle.class.getName(),
+        vertx.deployVerticle(InvoiceVerticle.class.getName(),
                 context.asyncAssertSuccess());
     }
 
@@ -37,7 +37,7 @@ public class InvoiceVerticleTest {
         EventBusService.getProxy(discovery, InvoiceService.class, ar -> {
             if (ar.succeeded()) {
                 InvoiceService service = ar.result();
-                service.save("collection", null, handler-> {
+                service.getAll(handler-> {
                     if (handler.succeeded()) {
                         // do something with the result by calling handler.result()
                         System.out.println(handler.result());
