@@ -45,6 +45,7 @@ public class InvoiceVerticleTest {
                         // do something with the error by calling for instance handler.cause()
                     }
                     System.out.println("end testMyApplication");
+                    service.release();
                     async.complete();
                 });
             }

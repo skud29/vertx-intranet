@@ -3,8 +3,6 @@ package fr.ods.intranet.invoice.impl;
 import com.couchbase.client.java.AsyncBucket;
 import com.couchbase.client.java.CouchbaseAsyncCluster;
 import fr.ods.intranet.database.CouchbaseHelper;
-import fr.ods.intranet.invoice.File;
-import fr.ods.intranet.invoice.Invoice;
 import fr.ods.intranet.invoice.InvoiceService;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -14,10 +12,6 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class InvoiceServiceImpl implements InvoiceService {
 
@@ -35,6 +29,20 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.bucket = CouchbaseHelper.openBucket(cluster, config.getString("invoiceBucket", "intranet"))
                 .toBlocking()
                 .single();
+    }
+
+    public void finalize() {
+        release();
+    }
+
+    @Override
+    public void release() {
+        if (this.bucket != null) {
+            CouchbaseHelper.closeBucket(this.bucket).doOnNext(value -> this.bucket=null).subscribe();
+        }
+        if (this.cluster != null) {
+            CouchbaseHelper.diconnect(this.cluster).doOnNext(value -> this.cluster=null).subscribe();
+        }
     }
 
     @Override

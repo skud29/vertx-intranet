@@ -12,6 +12,7 @@ import java.util.List;
 @ProxyGen
 public interface InvoiceService {
 
+    void release();
     void getAll(Handler<AsyncResult<JsonArray>> resultHandler);
 
 }
