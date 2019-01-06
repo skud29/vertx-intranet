@@ -31,6 +31,12 @@
             <artifactId>vertx-service-discovery</artifactId>
         </dependency>
 
+        <!-- Couchbase access -->
+        <dependency>
+            <groupId>com.couchbase.client</groupId>
+            <artifactId>java-client</artifactId>
+        </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>io.vertx</groupId>

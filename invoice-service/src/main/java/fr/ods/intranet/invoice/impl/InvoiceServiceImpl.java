@@ -3,11 +3,12 @@ package fr.ods.intranet.invoice.impl;
 import fr.ods.intranet.invoice.File;
 import fr.ods.intranet.invoice.Invoice;
 import fr.ods.intranet.invoice.InvoiceService;
-import fr.ods.intranet.invoice.Invoices;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,7 +23,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void getAll(Handler<AsyncResult<Invoices>> resultHandler) {
+    public void getAll(Handler<AsyncResult<JsonArray>> resultHandler) {
         System.out.println("getAll");
         Invoice invoice = new Invoice();
         invoice.setClient("Cmm");
@@ -41,8 +42,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         file.setSize(54652);
         files.add(file);
         invoice.setFiles(files);
-        List<Invoice> invoices = new ArrayList();
-        invoices.add(invoice);
-        resultHandler.handle(Future.succeededFuture(new Invoices(invoices)));
+        List<JsonObject> invoices = new ArrayList();
+        invoices.add(invoice.toJson());
+        JsonArray json = new JsonArray(invoices);
+        resultHandler.handle(Future.succeededFuture(json));
+
     }
 }
