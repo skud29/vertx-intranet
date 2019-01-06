@@ -1,9 +1,13 @@
 package fr.ods.intranet.database;
 
+import com.couchbase.client.core.CouchbaseException;
 import com.couchbase.client.java.AsyncBucket;
-import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseAsyncCluster;
+import com.couchbase.client.java.query.AsyncN1qlQueryRow;
+import com.couchbase.client.java.query.N1qlQuery;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -36,7 +40,8 @@ public class CouchbaseHelper {
     }
 
     public static Observable<Boolean> diconnect(CouchbaseAsyncCluster cluster) {
-        return cluster.disconnect();
+        return cluster.disconnect()
+                .doOnNext(isDisconnectedCluster -> logger.info("Cluser COucheBase déconnecté : "+isDisconnectedCluster.toString()));
     }
 
     public static Observable<AsyncBucket> openBucket(CouchbaseAsyncCluster cluster, String bucketName) {
@@ -45,6 +50,26 @@ public class CouchbaseHelper {
     }
 
     public static Observable<Boolean> closeBucket(AsyncBucket bucket) {
-        return bucket.close();
+        return bucket.close()
+                .doOnNext(isClosed -> logger.info("Bucket Couchebase fermé : " + isClosed.toString()));
     }
+
+    public static void select(AsyncBucket bucket, String query, Handler<AsyncResult<JsonArray>> resultHandler) {
+        JsonArray json = new JsonArray();
+        N1qlQuery q = N1qlQuery.simple(query);
+        bucket.query(q)
+                .flatMap(result ->
+                        result.errors()
+                                .flatMap(e -> Observable.<AsyncN1qlQueryRow>error(new CouchbaseException("N1QL Error/Warning: " + e)))
+                                .switchIfEmpty(result.rows())
+                )
+                .map(AsyncN1qlQueryRow::value)
+                .subscribe(
+                        rowContent -> json.add(new JsonObject(rowContent.toMap())),
+                        runtimeError -> runtimeError.printStackTrace(),
+                        () -> resultHandler.handle(Future.succeededFuture(json))
+                );
+
+    }
+
 }

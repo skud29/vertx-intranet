@@ -21,7 +21,7 @@ public class InvoiceVerticle extends AbstractVerticle {
     public void start(Future<Void> startFuture) {
         discovery = ServiceDiscovery.create(vertx);
 
-        InvoiceService service = new InvoiceServiceImpl(vertx);
+        InvoiceService service = new InvoiceServiceImpl(vertx, config());
 
         ProxyHelper.registerService(InvoiceService.class, vertx, service, "invoice-service-address");
 
