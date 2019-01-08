@@ -62,4 +62,29 @@ public class InvoiceServiceImpl implements InvoiceService {
                 }
         );
     }
+
+    @Override
+    public void getAllByPage(int offset, int limit, String orderBy, Handler<AsyncResult<JsonArray>> resultHandler) {
+        Long t1 = System.currentTimeMillis();
+        // Construction de la requête
+        StringBuilder request = new StringBuilder("SELECT * FROM `intranet`where type=\"invoices\"");
+        if (orderBy!=null) {
+            request.append(" ORDER BY ").append(orderBy);
+        }
+        request.append(" OFFSET ").append(offset).append(" LIMIT ").append(limit).append(";");
+        CouchbaseHelper.select(
+                bucket,
+                request.toString(),
+                handler-> {
+                    if (handler.succeeded()) {
+                        // do something with the result by calling handler.result()
+                        Long t2 = System.currentTimeMillis();
+                        System.out.println("Durée requete = "+(t2-t1)+" ms");
+                        resultHandler.handle(Future.succeededFuture(handler.result()));
+                    } else {
+                        // do something with the error by calling for instance handler.cause()
+                    }
+                }
+        );
+    }
 }

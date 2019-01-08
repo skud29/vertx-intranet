@@ -31,7 +31,7 @@ public class InvoiceVerticleTest {
     }
 
     @Test
-    public void testMyApplication(TestContext context) {
+    public void getAllInvoices(TestContext context) {
         Async async = context.async();
 
         EventBusService.getProxy(discovery, InvoiceService.class, ar -> {
@@ -44,7 +44,29 @@ public class InvoiceVerticleTest {
                     } else {
                         // do something with the error by calling for instance handler.cause()
                     }
-                    System.out.println("end testMyApplication");
+                    System.out.println("end getAllInvoices");
+                    service.release();
+                    async.complete();
+                });
+            }
+        });
+    }
+
+    @Test
+    public void getInvoicesByPage(TestContext context) {
+        Async async = context.async();
+
+        EventBusService.getProxy(discovery, InvoiceService.class, ar -> {
+            if (ar.succeeded()) {
+                InvoiceService service = ar.result();
+                service.getAllByPage(0, 10, "date DESC", handler-> {
+                    if (handler.succeeded()) {
+                        // do something with the result by calling handler.result()
+                        System.out.println(handler.result());
+                    } else {
+                        // do something with the error by calling for instance handler.cause()
+                    }
+                    System.out.println("end getInvoicesByPage");
                     service.release();
                     async.complete();
                 });

@@ -14,5 +14,6 @@ public interface InvoiceService {
 
     void release();
     void getAll(Handler<AsyncResult<JsonArray>> resultHandler);
+    void getAllByPage(int offset, int limit, String orderBy, Handler<AsyncResult<JsonArray>> resultHandler);
 
 }
