@@ -90,4 +90,49 @@ public class InvoiceServiceImpl implements InvoiceService {
                 }
         );
     }
+
+    public void getAllUnPaid(Handler<AsyncResult<JsonArray>> resultHandler) {
+        Instant start = Instant.now();
+        // Construction de la requête
+        StringBuilder request = new StringBuilder("SELECT * FROM `intranet` where type=\"invoices\"");
+        request.append(" AND (sommepayeeTTC IS MISSING or sommeTTC<>sommepayeeTTC)");
+        request.append(" ORDER BY DATE DESC");
+
+        CouchbaseHelper.select(
+                bucket,
+                request.toString(),
+                handler-> {
+                    if (handler.succeeded()) {
+                        // do something with the result by calling handler.result()
+                        Instant finish = Instant.now();
+                        logger.info("Durée requete = "+Duration.between(start, finish).toMillis()+" ms");
+                        resultHandler.handle(Future.succeededFuture(handler.result()));
+                    } else {
+                        // do something with the error by calling for instance handler.cause()
+                    }
+                }
+        );
+    }
+
+    public void getById(String invoiceId, Handler<AsyncResult<JsonArray>> resultHandler) {
+        Instant start = Instant.now();
+        // Construction de la requête
+        StringBuilder request = new StringBuilder("SELECT * FROM `intranet` where type=\"invoices\"");
+        request.append(" AND _id="+invoiceId);
+
+        CouchbaseHelper.select(
+                bucket,
+                request.toString(),
+                handler-> {
+                    if (handler.succeeded()) {
+                        // do something with the result by calling handler.result()
+                        Instant finish = Instant.now();
+                        logger.info("Durée requete = "+Duration.between(start, finish).toMillis()+" ms");
+                        resultHandler.handle(Future.succeededFuture(handler.result()));
+                    } else {
+                        // do something with the error by calling for instance handler.cause()
+                    }
+                }
+        );
+    }
 }

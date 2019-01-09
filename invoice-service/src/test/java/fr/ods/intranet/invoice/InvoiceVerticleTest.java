@@ -75,4 +75,27 @@ public class InvoiceVerticleTest {
             }
         });
     }
+
+    @Test
+    public void getInvoicesUnPaid(TestContext context) {
+        Async async = context.async();
+
+        EventBusService.getProxy(discovery, InvoiceService.class, ar -> {
+            if (ar.succeeded()) {
+                InvoiceService service = ar.result();
+                service.getAllUnPaid(handler-> {
+                    if (handler.succeeded()) {
+                        // do something with the result by calling handler.result()
+                        System.out.println(handler.result());
+                        System.out.println(handler.result().size() + " éléments lus");
+                    } else {
+                        // do something with the error by calling for instance handler.cause()
+                    }
+                    System.out.println("end getInvoicesUnPaid");
+                    service.release();
+                    async.complete();
+                });
+            }
+        });
+    }
 }
