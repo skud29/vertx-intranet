@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>invoice-service</module>
+        <module>vertx-common</module>
     </modules>
 
     <parent>

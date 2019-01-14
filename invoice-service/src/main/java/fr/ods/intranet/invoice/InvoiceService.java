@@ -12,6 +12,16 @@ import java.util.List;
 @ProxyGen
 public interface InvoiceService {
 
+    /**
+     * The name of the event bus service.
+     */
+    String SERVICE_NAME = "invoice-eb-service";
+
+    /**
+     * The address on which the service is published.
+     */
+    String SERVICE_ADDRESS = "service.invoice";
+
     void release();
     void getAll(Handler<AsyncResult<JsonArray>> resultHandler);
     void getAllByPage(int offset, int limit, String orderBy, Handler<AsyncResult<JsonArray>> resultHandler);

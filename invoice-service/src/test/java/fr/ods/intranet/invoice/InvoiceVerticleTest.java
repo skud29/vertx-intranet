@@ -1,6 +1,5 @@
 package fr.ods.intranet.invoice;
 
-import fr.ods.intranet.invoice.impl.InvoiceVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;

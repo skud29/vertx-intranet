@@ -1,0 +1,5 @@
+{
+  "api.name": "invoice",
+  "invoice.http.address": "invoice-service",
+  "invoice.http.port": 8081
+}
