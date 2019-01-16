@@ -9,7 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>vertx-intranet-invoice-service</artifactId>
+    <artifactId>invoice-service</artifactId>
+
+    <properties>
+        <main.verticle>fr.ods.intranet.invoice.InvoiceVerticle</main.verticle>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -55,5 +59,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- plugin to create a `fat-jar` -->
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

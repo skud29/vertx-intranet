@@ -6,6 +6,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CookieHandler;
@@ -22,6 +24,8 @@ import java.util.function.Function;
 
 public class RestApiVerticle extends BaseMicroserviceVerticle {
 
+    private static final Logger logger = LoggerFactory.getLogger(RestApiVerticle.class);
+
     /**
      * Create http server for the REST service.
      *
@@ -35,6 +39,7 @@ public class RestApiVerticle extends BaseMicroserviceVerticle {
         vertx.createHttpServer()
                 .requestHandler(router)
                 .listen(port, host, httpServerFuture.completer());
+        logger.info("Serveur HTTP démarré sur "+host+":"+port);
         return httpServerFuture.map(r -> null);
     }
 
