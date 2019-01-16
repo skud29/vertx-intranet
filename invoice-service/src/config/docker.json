@@ -1,5 +1,5 @@
 {
   "api.name": "invoice-api",
-  "invoice.http.address": "localhost",
+  "invoice.http.address": "0.0.0.0",
   "invoice.http.port": 8081
 }

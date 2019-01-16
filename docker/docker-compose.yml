@@ -1,0 +1,19 @@
+version: "2"
+services:
+  couchbase:
+    image: couchbase:latest
+    ports:
+      - "8091:8091"
+    expose:
+      - "8092-8094"
+      - "11210"
+    volumes:
+      - C:/docker/couchbase:/opt/couchbase/var
+  invoice-microservice:
+    image: vertx-intranet/invoice-microservice
+    links:
+      - couchbase
+    depends_on:
+      - couchbase
+    expose:
+      - "8081"
