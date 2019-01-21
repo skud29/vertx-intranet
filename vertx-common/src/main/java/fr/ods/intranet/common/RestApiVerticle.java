@@ -15,6 +15,8 @@ import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.sstore.ClusteredSessionStore;
 import io.vertx.ext.web.sstore.LocalSessionStore;
+import io.vertx.redis.RedisClient;
+import io.vertx.redis.op.SetOptions;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -178,13 +180,21 @@ public class RestApiVerticle extends BaseMicroserviceVerticle {
      * @param <T>     result type
      * @return generated handler
      */
-    protected <T> Handler<AsyncResult<T>> resultHandlerNonEmpty(RoutingContext context) {
+    protected <T> Handler<AsyncResult<T>> resultHandlerNonEmpty(RoutingContext context, RedisClient redisClient, String keyCache, long expiration) {
         return ar -> {
             if (ar.succeeded()) {
                 T res = ar.result();
                 if (res == null) {
                     notFound(context);
                 } else {
+                    if (keyCache!=null && redisClient!=null) {
+                        SetOptions options = new SetOptions().setEX(expiration);
+                        redisClient.setWithOptions(keyCache, res.toString(), options, resultat -> {
+                            if (resultat.succeeded()) {
+                                System.out.println("key stored");
+                            }
+                        });
+                    }
                     context.response()
                             .putHeader("content-type", "application/json")
                             .end(res.toString());

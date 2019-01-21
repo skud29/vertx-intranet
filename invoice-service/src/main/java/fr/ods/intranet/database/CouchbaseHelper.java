@@ -23,7 +23,7 @@ public class CouchbaseHelper {
 
     public static CouchbaseAsyncCluster connect(JsonObject config) {
         //getting the bootstrap node, as a JSON array (default to localhost)
-        JsonArray seedNodeArray = config.getJsonArray("couchbase.seedNodes", new JsonArray().add("localhost"));
+        JsonArray seedNodeArray = config.getJsonArray("couchbase.seedNodes", new JsonArray().add("couchbase"));
         //convert to a List
         List seedNodes = new ArrayList<>(seedNodeArray.size());
         for (Object seedNode : seedNodeArray) {

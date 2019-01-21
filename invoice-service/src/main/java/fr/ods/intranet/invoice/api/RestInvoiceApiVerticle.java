@@ -7,6 +7,8 @@ import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.redis.RedisClient;
+import io.vertx.redis.RedisOptions;
 
 public class RestInvoiceApiVerticle extends RestApiVerticle {
 
@@ -22,6 +24,7 @@ public class RestInvoiceApiVerticle extends RestApiVerticle {
     private static final String API_DELETE_ALL = "/all";
 
     private final InvoiceService service;
+    private RedisClient redisClient;
 
     public RestInvoiceApiVerticle(InvoiceService service) {
         this.service = service;
@@ -33,6 +36,7 @@ public class RestInvoiceApiVerticle extends RestApiVerticle {
         final Router router = Router.router(vertx);
         // body handler
         router.route().handler(BodyHandler.create());
+
         // API route handler
         router.get(API_RETRIEVE_BY_PAGE).handler(this::apiRetrieveByPage);
         router.get(API_RETRIEVE_ALL).handler(this::apiRetrieveAll);
@@ -42,6 +46,10 @@ public class RestInvoiceApiVerticle extends RestApiVerticle {
         String host = config().getString("invoice.http.address", "0.0.0.0");
         int port = config().getInteger("invoice.http.port", 8081);
 
+        String redisHost = config().getString("invoice.redis.host", "127.0.0.1");
+        // Create the redis client
+        redisClient = RedisClient.create(vertx, new RedisOptions().setHost(redisHost));
+
         // create HTTP server and publish REST service
         createHttpServer(router, host, port)
                 .compose(serverCreated -> publishHttpEndpoint(SERVICE_NAME, host, port))
@@ -50,7 +58,15 @@ public class RestInvoiceApiVerticle extends RestApiVerticle {
 
     private void apiRetrieve(RoutingContext context) {
         String invoiceId = context.request().getParam("invoiceId");
-        service.getById(invoiceId, resultHandlerNonEmpty(context));
+        String keyCache = "apiRetrieve_"+invoiceId;
+        redisClient.get(keyCache, res -> {
+            if (res.succeeded()) {
+                System.out.println("key exists");
+            }
+            else {
+                service.getById(invoiceId, resultHandlerNonEmpty(context, redisClient, keyCache, 1200));
+            }
+        });
     }
 
     private void apiRetrieveByPage(RoutingContext context) {

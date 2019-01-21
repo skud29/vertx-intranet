@@ -31,6 +31,10 @@
             <artifactId>vertx-codegen</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-redis-client</artifactId>
+        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
